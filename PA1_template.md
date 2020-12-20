@@ -4,12 +4,11 @@ output:
   html_document:
     keep_md: true
 ---
-```{r, echo=FALSE, results='hide'}
-knitr::opts_chunk$set(message=FALSE, warning=FALSE)
-```
+
 
 ## Loading and preprocessing the data
-```{r}
+
+```r
 library(tidyverse)
 unzip("activity.zip")
 data <- read.csv("activity.csv")
@@ -25,7 +24,8 @@ data <- data %>%
 
 
 ## What is mean total number of steps taken per day?
-```{r}
+
+```r
 total_day_steps <- data[!duplicated(data$date),]
 
 ggplot(total_day_steps %>% uncount(date_steps_sum)) + 
@@ -33,24 +33,50 @@ ggplot(total_day_steps %>% uncount(date_steps_sum)) +
   geom_hline(yintercept = mean(total_day_steps$date_steps_sum), color="blue" ) +
   geom_hline(yintercept = median(total_day_steps$date_steps_sum), color="red" ) +
   xlab("Date") + ylab("Total Steps")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
+```r
 median(total_day_steps$date_steps_sum) %>% print
+```
+
+```
+## [1] 10395
+```
+
+```r
 mean(total_day_steps$date_steps_sum) %>% print
+```
+
+```
+## [1] 9354.23
 ```
 
 
 ## What is the average daily activity pattern?
-```{r}
+
+```r
 total_day_steps <- data[!duplicated(data$interval),]
   
 ggplot(total_day_steps, aes(x=interval, y=interval_steps_avg)) +
   geom_line() + xlab("Interval") + ylab("Average Steps")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
 
 ## Imputing missing values
-```{r}
+
+```r
 sum(is.na(data$steps)) %>% print
+```
+
+```
+## [1] 2304
+```
+
+```r
 data2 <- data
 data2$steps = ifelse(is.na(data2$steps), data2$interval_steps_avg, data2$steps)
 data2 <- data2 %>% 
@@ -64,14 +90,30 @@ ggplot(total_day_steps %>% uncount(date_steps_sum)) +
   geom_hline(yintercept = mean(total_day_steps$date_steps_sum), color="blue" ) +
   geom_hline(yintercept = median(total_day_steps$date_steps_sum), color="red" ) +
   xlab("Date") + ylab("Total Steps")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+
+```r
 median(total_day_steps$date_steps_sum) %>% print
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 mean(total_day_steps$date_steps_sum) %>% print
+```
+
+```
+## [1] 10766.19
 ```
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r}
+
+```r
 data2 <- data2 %>% 
   mutate(weekend = weekdays(date) %in% c('samedi', 'dimanche'))
 
@@ -92,3 +134,5 @@ p2 <- ggplot(weekend_data, aes(x=interval, y=avg_steps)) +
 library(gridExtra)
 grid.arrange(p1, p2)
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
